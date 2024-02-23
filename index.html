@@ -7,16 +7,50 @@
 <style>
     body {
         font-family: Arial, sans-serif;
-        text-align: center;
-        margin-top: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f2f2f2;
     }
     #clock {
         font-size: 3em;
+        position: relative;
+    }
+    .clock-hand {
+        position: absolute;
+        background-color: black;
+        transform-origin: 50% 100%;
+    }
+    .hour-hand {
+        height: 35%;
+        width: 6px;
+    }
+    .minute-hand {
+        height: 45%;
+        width: 4px;
+    }
+    .second-hand {
+        height: 48%;
+        width: 2px;
+        background-color: red;
+    }
+    /* Animation for smooth transition of clock hands */
+    @keyframes move {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    .clock-hand {
+        animation: move 43200s linear infinite; /* 12 hours for 360 degrees */
     }
 </style>
 </head>
 <body>
 <div id="clock"></div>
+<div class="clock-hand hour-hand" id="hourHand"></div>
+<div class="clock-hand minute-hand" id="minuteHand"></div>
+<div class="clock-hand second-hand" id="secondHand"></div>
 
 <script>
 function updateTime() {
@@ -25,12 +59,16 @@ function updateTime() {
     var minutes = now.getMinutes();
     var seconds = now.getSeconds();
 
-    hours = (hours < 10 ? "0" : "") + hours;
-    minutes = (minutes < 10 ? "0" : "") + minutes;
-    seconds = (seconds < 10 ? "0" : "") + seconds;
+    var hourDeg = (hours % 12 + minutes / 60) * 30; // Calculate hour hand rotation
+    var minDeg = (minutes + seconds / 60) * 6; // Calculate minute hand rotation
+    var secDeg = seconds * 6; // Calculate second hand rotation
 
-    var timeString = hours + ":" + minutes + ":" + seconds;
+    var timeString = (hours < 10 ? "0" : "") + hours + ":" + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     document.getElementById('clock').textContent = timeString;
+
+    document.getElementById('hourHand').style.transform = `rotate(${hourDeg}deg)`; // Apply hour hand rotation
+    document.getElementById('minuteHand').style.transform = `rotate(${minDeg}deg)`; // Apply minute hand rotation
+    document.getElementById('secondHand').style.transform = `rotate(${secDeg}deg)`; // Apply second hand rotation
 }
 
 updateTime();
